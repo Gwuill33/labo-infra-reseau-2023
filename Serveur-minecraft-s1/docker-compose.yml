@@ -1,0 +1,126 @@
+version: '3.5'
+
+services:
+  mc-lobby:
+    container_name: mc-lobby
+    image: itzg/minecraft-server
+    environment:
+      EULA: "TRUE"
+      ONLINE_MODE: "FALSE"
+      TYPE: "PAPER"
+      VERSION: "1.20.2"
+      MAX_MEMORY: "2G"
+      SERVER_NAME: "QSNP"
+      MOTD: "Bienvenue sur le serveur QSNP !"
+      PVP: "false"
+      DIFFICULTY: "peaceful"
+      SPAWN_PROTECTION: "16"
+      ALLOW_NETHER: "false"
+      ALLOW_END: "false"
+      GENERATE_STRUCTURES: "false"
+      LEVEL_TYPE: "FLAT"
+      MODE: "adventure"
+      FORCE_GAMEMODE: "true"
+
+    restart: unless-stopped
+
+    volumes:
+      - ./lobby:/data
+
+    depends_on:
+      - proxy
+
+  mc-survival:
+    container_name: mc-survival
+    image: itzg/minecraft-server
+    environment:
+      EULA: "TRUE"
+      ONLINE_MODE: "FALSE"
+      TYPE: "PAPER"
+      VERSION: "1.20.2"
+      MAX_MEMORY: "3G"
+      SERVER_NAME: "QSNP"
+      MOTD: "Bienvenue sur le serveur QSNP !"
+      PVP: "true"
+      DIFFICULTY: "normal"
+      ALLOW_NETHER: "true"
+      ALLOW_END: "true"
+      GENERATE_STRUCTURES: "true"
+      LEVEL_TYPE: "DEFAULT"
+      MODE: "survival"
+      FORCE_GAMEMODE: "false"
+      ENABLE_AUTOSTOP: "true"
+      AUTOSTOP_TIMEOUT_EST: "600"
+    volumes:
+      - ./survival:/data
+
+    restart: unless-stopped
+
+    depends_on:
+      - proxy
+
+  mc-creative:
+    container_name: mc-creative
+    image: itzg/minecraft-server
+    environment:
+      EULA: "TRUE"
+      ONLINE_MODE: "FALSE"
+      TYPE: "PAPER"
+      VERSION: "1.20.2"
+      MAX_MEMORY: "3G"
+      SERVER_NAME: "QSNP"
+      MOTD: "Bienvenue sur le serveur QSNP !"
+      PVP: "false"
+      DIFFICULTY: "peaceful"
+      ALLOW_NETHER: "true"
+      ALLOW_END: "true"
+      GENERATE_STRUCTURES: "true"
+      LEVEL_TYPE: "DEFAULT"
+      MODE: "creative"
+      FORCE_GAMEMODE: "false"
+      ENABLE_AUTOSTOP: "true"
+      AUTOSTOP_TIMEOUT_EST: "600"
+    volumes:
+      - ./creative:/data
+    restart: unless-stopped
+
+    depends_on:
+      - proxy
+
+  # mc-modde:
+  #   container_name: mc-modde
+  #   image: itzg/minecraft-server
+  #   environment:
+  #     EULA: "TRUE"
+  #     ONLINE_MODE: "FALSE"
+  #     TYPE: "FABRIC"
+  #     VERSION: "1.20.2"
+  #     MAX_MEMORY: "3G"
+  #     SERVER_NAME: "QSNP"
+  #     MOTD: "Bienvenue sur le serveur QSNP !"
+  #     PVP: "false"
+  #     DIFFICULTY: "peaceful"
+  #     SPAWN_PROTECTION: "16"
+  #     ALLOW_NETHER: "true"
+  #     ALLOW_END: "true"
+  #     GENERATE_STRUCTURES: "true"
+  #     LEVEL_TYPE: "DEFAULT"
+  #     MODE: "creative"
+  #     FORCE_GAMEMODE: "false"
+  #   volumes:
+  #     - ./modde:/data
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - proxy
+
+  proxy:
+    image: itzg/bungeecord
+    environment:
+      TYPE: VELOCITY
+      DEBUG: "false"
+      ENABLE_RCON: "true"
+    ports:
+      - "25565:25577"
+    volumes:
+      - ./proxy:/server
+    restart: unless-stopped
